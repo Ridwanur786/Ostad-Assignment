@@ -107,6 +107,8 @@ def currency_rate_fetcher():
     except Exception as e:
                print(f"\nError Fetching Currency Data: {e}")
 
+               #-----Save Data to data.json file---------
+
 def save_json_to_file():
      global current_data
 
@@ -120,6 +122,8 @@ def save_json_to_file():
               print("\nData Saved Successfully")
      except Exception as e:
           print(f"\nError: saving data:{e}")
+
+          #------Display Saved data from data.json file--------
 
 def display_saved_data():
      file_name = "data.json"
@@ -156,6 +160,8 @@ def display_saved_data():
         print("\nError: data.json file contains invalid JSON data.")
      except Exception as e:
         print(f"\nError reading file: {e}")   
+
+        #------MAIN MENU--------
 
 def menu():
      #***dispaly main menu in CLI***
