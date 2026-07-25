@@ -1,0 +1,9 @@
+#Python/Virtual Environment
+__pycache__/
+*.pyc
+venv/
+.venv/
+#Environment Variables & Local data
+.env
+data.json
+.DS_Store
