@@ -1,0 +1,342 @@
+/* style.css */
+
+/* Reset & Base Styles */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+body {
+   font-family: "Lato", sans-serif;
+   color: #333333;
+   background-color: #f8f9fa;
+   line-height: 1.6;
+}
+
+/* Common Button & Hover Effect */
+.btn {
+   display: inline-block;
+   background-color: #0d0f11;
+   color: #ffffff;
+   padding: 10px 20px;
+   text-decoration: none;
+   border-radius: 5px;
+   border: none;
+   font-size: 16px;
+   font-weight: 500;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+   background-color: #0056b3;
+}
+
+/* 1. Header */
+.navbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #ffffff;
+   padding: 15px 40px;
+   border-bottom: 1px solid #c417176c;
+}
+
+.logo {
+   font-size: 24px;
+   font-weight: bold;
+   font-family: "Lato", sans-serif;
+   color: rgba(5, 16, 27, 0.774);
+   border-bottom: 2px solid gainsboro;
+}
+
+.nav-links {
+   display: flex;
+   list-style: none;
+   gap: 20px;
+}
+
+.nav-links a {
+   text-decoration: none;
+   color: #333333;
+   font-size: 16px;
+}
+
+/* 2. Hero Section */
+.hero-section {
+   background-image: url("../ebook-landing-page/images/background5.jpg");
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: cover;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 50px 40px;
+}
+
+.hero-content {
+   width: 50%;
+}
+
+.hero-content h1 {
+   font-size: 45px;
+   font-weight: 900;
+   color: rgb(61, 56, 56);
+   text-shadow: 5px 2px 4px gray;
+   margin-bottom: 15px;
+}
+
+.hero-content p {
+   font-size: 20px;
+   font-weight: 400;
+   color: #02060a;
+   margin-bottom: 15px;
+}
+
+.hero-price {
+   font-size: 22px;
+   font-weight: bold;
+   color: #5f50e9;
+   margin-bottom: 20px;
+}
+
+.hero-image {
+   width: 40%;
+   text-align: center;
+}
+
+.hero-image img {
+   width: 100%;
+   max-width: 300px;
+   border-radius: 8px;
+}
+
+/* 3. About Section */
+.about-section {
+   padding: 40px;
+   background-color: #ffffff;
+   width: 80%;
+   margin: 0 auto;
+}
+
+.about-section h2 {
+   font-size: 45px;
+   font-weight: 900;
+   color: rgb(61, 56, 56);
+   text-shadow: 5px 2px 4px gray;
+   margin-bottom: 15px;
+}
+
+.about-section h3 {
+   margin-top: 20px;
+   margin-bottom: 10px;
+   font-size: 20px;
+   font-weight: 600;
+   color: rgb(61, 56, 56);
+   text-shadow: 5px 2px 4px gray;
+}
+
+.learn-list {
+   margin-left: 20px;
+   list-style: none;
+   padding-left: 0;
+}
+
+.learn-list li {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   margin-bottom: 8px;
+}
+
+.learn-list li .material-symbol-outlined {
+   font-size: 20px;
+   color: rgb(136, 136, 136);
+   box-shadow: 1px 2px 3px gray;
+}
+
+/* 4. Features Section */
+.features-section {
+   padding: 40px;
+   text-align: center;
+}
+
+/* .icon {
+   font-size: 50px;
+   color: #333333;
+
+} */
+
+.icon,
+.laptop,
+.mobile {
+   font-size: 50px;
+   color: #333333;
+}
+
+.features-section h2 {
+   margin-bottom: 30px;
+}
+
+.features-grid {
+   display: flex;
+   gap: 20px;
+   justify-content: center;
+}
+
+.feature-card {
+   background-color: #ffffff;
+   padding: 25px;
+   border-radius: 8px;
+   border: 1px solid #dddddd;
+   width: 30%;
+   text-align: center;
+}
+
+.feature-icon {
+   font-size: 40px;
+   margin-bottom: 10px;
+}
+
+.feature-card h3 {
+   margin-bottom: 10px;
+}
+
+/* Bonus: FAQ Section */
+.faq-section {
+   padding: 40px;
+   background-color: #ffffff;
+   width: 80%;
+   margin: 0 auto;
+}
+
+.faq-section h2 {
+   margin-bottom: 20px;
+}
+
+details {
+   background-color: #f8f9fa;
+   padding: 15px;
+   margin-bottom: 10px;
+   border-radius: 5px;
+   border: 1px solid #dddddd;
+}
+
+summary {
+   font-weight: bold;
+   cursor: pointer;
+}
+
+/* 5. Pricing Section */
+.pricing-section {
+   padding: 40px;
+   text-align: center;
+}
+
+.pricing-card {
+   background-color: #ffffff;
+   border: 2px solid #007bff;
+   border-radius: 8px;
+   padding: 30px;
+   width: 280px;
+   margin: 20px auto;
+}
+
+.original-price {
+   text-decoration: line-through;
+   color: #888888;
+   font-size: 18px;
+}
+
+.discounted-price {
+   font-size: 32px;
+   color: #28a745;
+   font-weight: bold;
+   margin: 10px 0;
+}
+
+/* 6. Simple Order Form */
+.order-section {
+   padding: 40px;
+   background-color: #ffffff;
+}
+
+.order-section h2 {
+   text-align: center;
+   margin-bottom: 20px;
+}
+
+.order-form {
+   width: 100%;
+   max-width: 450px;
+   margin: 0 auto;
+   background-color: #f8f9fa;
+   padding: 25px;
+   border-radius: 8px;
+   border: 1px solid #dddddd;
+}
+
+.form-group {
+   margin-bottom: 15px;
+}
+
+.form-group label {
+   display: block;
+   margin-bottom: 5px;
+   font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+   width: 100%;
+   padding: 10px;
+   border: 1px solid #cccccc;
+   border-radius: 4px;
+   font-size: 14px;
+}
+
+.btn-submit {
+   width: 100%;
+}
+
+/* 7. Footer */
+.footer {
+   background-color: #212529;
+   color: #ffffff;
+   text-align: center;
+   padding: 20px;
+   margin-top: 40px;
+}
+
+.footer a {
+   color: #007bff;
+   text-decoration: none;
+}
+
+/* Bonus: Mobile Responsiveness */
+@media (max-width: 768px) {
+   .navbar {
+      flex-direction: column;
+      gap: 15px;
+   }
+
+   .hero-section {
+      flex-direction: column;
+      text-align: center;
+   }
+
+   .hero-content,
+   .hero-image {
+      width: 100%;
+      margin-bottom: 20px;
+   }
+
+   .features-grid {
+      flex-direction: column;
+   }
+
+   .feature-card {
+      width: 100%;
+   }
+}
