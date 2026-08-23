@@ -7,3 +7,4 @@ venv/
 .env
 data.json
 .DS_Store
+django_env
