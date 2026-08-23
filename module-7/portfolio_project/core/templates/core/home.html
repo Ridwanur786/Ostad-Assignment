@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Home - Portfolio{% endblock %}
+
+{% block content %}
+<header id="home-section">
+   <div class="overlay">
+      <div class="inner">
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-8">
+                  <div class="heading text-center">
+                     <p class="display-4">Welcome to My Portfolio</p>
+                  </div>
+                  <div class="flexible">
+                     <div class="d-flex flex-row">
+                        <div class="p-3 align-self-start"><i class="fas fa-user-check fa-2x"></i></div>
+                        <div class="p-3 align-self-end">Passionate Python & Django Web Developer building scalable
+                           applications.</div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-4">
+                  <div class="card card-form text-center bg-light">
+                     <div class="card-body">
+                        <img src="{% static 'images/bio_image.jpg' %}" alt="profilePic"
+                           class="card-image-top img-fluid">
+                        <h3 class="display-5 card-title">Hi, My name is Ridwanur Rahman Khan</h3>
+                        <p class="card-text">Web Developer / Django Enthusiast</p>
+                        <div class="social-icon d-flex flex-row justify-content-center">
+                           <a href="https://github.com" class="social_link p-2"><i class="fab fa-github fa-2x"></i></a>
+                           <a href="https://linkedin.com" class="social_link p-2"><i
+                                 class="fab fa-linkedin fa-2x"></i></a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</header>
+
+<section id="projects-delivered">
+   <div class="container mt-5">
+      <p class="h1 p-3 text-center">FEATURED PROJECTS</p>
+      <div class="row">
+         {% for project in projects %}
+         <div class="col-sm-4 mb-4">
+            <div class="card h-100 text-center">
+               {% if project.image %}
+               <img src="{{ project.image.url }}" class="card-img-top img-fluid" alt="{{ project.title }}">
+               {% else %}
+               <img src="{% static 'images/github.png' %}" class="card-img-top img-fluid" alt="default">
+               {% endif %}
+               <div class="card-body">
+                  <h5 class="card-title">{{ project.title }}</h5>
+                  <p class="card-text">{{ project.description|truncatewords:10 }}</p>
+                  <a href="{% url 'project_detail' project.pk %}" class="btn btn-primary btn-sm">View Details</a>
+               </div>
+            </div>
+         </div>
+         {% empty %}
+         <p class="text-center col-12">No projects added yet.</p>
+         {% endfor %}
+      </div>
+   </div>
+</section>
+{% endblock %}

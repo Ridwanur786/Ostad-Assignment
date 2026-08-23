@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Projects - Portfolio{% endblock %}
+
+{% block content %}
+<section class="projects">
+   <div class="projects_bio-image">
+      <h1 class="text-project text-center my-4">My Projects</h1>
+   </div>
+   <div class="container">
+      <div class="row">
+         {% for project in projects %}
+         <div class="col-md-4 mb-4">
+            <div class="card h-100">
+               {% if project.image %}
+               <img src="{{ project.image.url }}" class="card-img-top img-fluid" alt="{{ project.title }}">
+               {% else %}
+               <img src="{% static 'images/github.png' %}" class="card-img-top img-fluid" alt="default">
+               {% endif %}
+               <div class="card-body">
+                  <h5 class="card-title">{{ project.title }}</h5>
+                  <p class="card-text"><strong>Tech:</strong> {{ project.technology_used }}</p>
+                  <a href="{% url 'project_detail' project.pk %}" class="btn btn-info btn-sm">Details</a>
+                  {% if project.github_link %}
+                  <a href="{{ project.github_link }}" target="_blank" class="btn btn-dark btn-sm"><i
+                        class="fab fa-github"></i> GitHub</a>
+                  {% endif %}
+               </div>
+            </div>
+         </div>
+         {% endfor %}
+      </div>
+   </div>
+</section>
+{% endblock %}
