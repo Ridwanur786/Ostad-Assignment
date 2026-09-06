@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Welcome to Campus Lost & Found</h2>
+<p>Quickly search for missing items or report found belongings on campus.</p>
+
+<hr>
+
+<h3>Recent Reports</h3>
+{% if recent_reports %}
+<ul>
+   {% for report in recent_reports %}
+   <li>
+      <strong>[{{ report.type }}]</strong>
+      <a href="{% url 'report_detail' report.id %}">{{ report.item_name }}</a>
+      - {{ report.category }} ({{ report.date }})
+      — <em>Status: {{ report.status }}</em>
+   </li>
+   {% endfor %}
+</ul>
+{% else %}
+<p>No recent reports available.</p>
+{% endif %}
+
+<p>
+   <a href="{% url 'report_list' %}">View All Reports</a> |
+   <a href="{% url 'report_create' %}">Report a Lost or Found Item</a>
+</p>
+{% endblock %}

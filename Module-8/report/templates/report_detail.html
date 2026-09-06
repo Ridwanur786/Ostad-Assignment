@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ report.item_name }} ({{ report.type }})</h2>
+
+<p><strong>Status:</strong> {{ report.status }}</p>
+<p><strong>Category:</strong> {{ report.category }}</p>
+<p><strong>Location:</strong> {{ report.location }}</p>
+<p><strong>Date:</strong> {{ report.date }}</p>
+<p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
+
+<p><strong>Description:</strong></p>
+<p>{{ report.description }}</p>
+
+{% if report.image %}
+<div>
+   <strong>Image:</strong><br>
+   <img src="{{ report.image.url }}" alt="{{ report.item_name }}" style="max-width: 300px; height: auto;">
+</div>
+{% endif %}
+
+<br>
+
+<!-- Action Buttons -->
+<div>
+   {% if report.status != 'Resolved' %}
+   <form action="{% url 'mark_resolved' report.id %}" method="POST" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit">Mark as Resolved</button>
+   </form> |
+   {% endif %}
+
+   <a href="{% url 'report_update' report.id %}">Edit Report</a> |
+   <a href="{% url 'report_delete' report.id %}">Delete Report</a>
+</div>
+
+<br>
+<a href="{% url 'report_list' %}">&larr; Back to Reports List</a>
+{% endblock %}

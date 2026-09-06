@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>All Lost & Found Reports</h2>
+
+<!-- Search & Filter Form -->
+<form method="GET" action="{% url 'report_list' %}">
+   {{ form.as_p }}
+   <button type="submit">Search / Filter</button>
+   <a href="{% url 'report_list' %}">Reset</a>
+</form>
+
+<hr>
+
+<!-- Reports List -->
+<h3>Results</h3>
+{% if reports %}
+<table border="1" cellpadding="8" cellspacing="0">
+   <thead>
+      <tr>
+         <th>Item Name</th>
+         <th>Type</th>
+         <th>Category</th>
+         <th>Date</th>
+         <th>Status</th>
+         <th>Action</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for report in reports %}
+      <tr>
+         <td>{{ report.item_name }}</td>
+         <td>{{ report.type }}</td>
+         <td>{{ report.category }}</td>
+         <td>{{ report.date }}</td>
+         <td>{{ report.status }}</td>
+         <td>
+            <a href="{% url 'report_detail' report.pk %}">View Details</a>
+         </td>
+      </tr>
+      {% endfor %}
+   </tbody>
+</table>
+{% else %}
+<p>No reports match your criteria.</p>
+{% endif %}
+{% endblock %}
