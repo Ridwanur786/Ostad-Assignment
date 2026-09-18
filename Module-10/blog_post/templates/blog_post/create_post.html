@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create Post - My Blog
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+   <div class="col-md-8">
+
+      <div class="card shadow-sm">
+
+         <div class="card-body">
+
+            <h1 class="mb-4">
+               Create New Blog Post
+            </h1>
+
+            <form method="post">
+
+               {% csrf_token %}
+
+               {{ form.as_p }}
+
+               <button type="submit" class="btn btn-primary">
+                  Publish Post
+               </button>
+
+               <a href="{% url 'home' %}" class="btn btn-secondary">
+                  Cancel
+               </a>
+
+            </form>
+
+         </div>
+
+      </div>
+
+   </div>
+
+</div>
+
+{% endblock %}

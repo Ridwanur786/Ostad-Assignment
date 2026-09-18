@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Posts - My Blog
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+   <h1>
+      My Posts
+   </h1>
+
+   <a href="{% url 'create_post' %}" class="btn btn-primary">
+      + Create Post
+   </a>
+
+</div>
+
+
+{% if posts %}
+
+{% for post in posts %}
+
+<div class="card mb-3 shadow-sm">
+
+   <div class="card-body">
+
+      <h3>
+         {{ post.title }}
+      </h3>
+
+      <p class="text-muted">
+         Created:
+         {{ post.created_at|date:"M d, Y H:i" }}
+      </p>
+
+      <p>
+         {{ post.content|truncatewords:30 }}
+      </p>
+
+      <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary btn-sm">
+         View
+      </a>
+
+      <a href="{% url 'edit_post' post.pk %}" class="btn btn-warning btn-sm">
+         Edit
+      </a>
+
+      <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger btn-sm">
+         Delete
+      </a>
+
+   </div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="alert alert-info">
+   You haven't created any posts yet.
+</div>
+
+{% endif %}
+
+{% endblock %}
