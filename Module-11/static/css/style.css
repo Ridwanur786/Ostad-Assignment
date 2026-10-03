@@ -1,0 +1,27 @@
+/* Custom Styles for Property Rental & Management System */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.card-custom {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badge-role-owner {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    font-weight: 600;
+}
+
+.badge-role-tenant {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    font-weight: 600;
+}

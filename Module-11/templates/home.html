@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Property Rental & Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-7">
+            <span
+                class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold mb-3">
+                <i class="fa-solid fa-sparkles me-1"></i> Ostad Batch 12 - Module 11
+            </span>
+            <h1 class="display-4 fw-bold text-dark lh-sm mb-3">
+                Property Rental & <br><span class="text-primary">Management System</span>
+            </h1>
+            <p class="lead text-secondary mb-4">
+                A role-based rental platform connecting <strong>Property Owners</strong> and <strong>Tenants</strong>.
+                Manage listings, search available spaces, handle rental requests, and maintain user profiles seamlessly.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{% url 'property_list' %}" class="btn btn-primary btn-lg shadow-sm">
+                    <i class="fa-solid fa-building me-2"></i> Browse Properties
+                </a>
+                {% if user.is_authenticated %}
+                {% if user.profile.is_owner %}
+                <a href="{% url 'property_create' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Post a Property
+                </a>
+                {% else %}
+                <a href="{% url 'profile' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fa-solid fa-id-badge me-2"></i> View Profile
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fa-solid fa-user-plus me-2"></i> Register Free
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card card-custom p-4 border-0 shadow-lg text-center bg-white">
+                <div class="p-3 bg-primary-subtle text-primary rounded-circle d-inline-flex mx-auto mb-3">
+                    <i class="fa-solid fa-shield-halved fa-3x"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Authentication System</h4>
+                <p class="text-muted small mb-4">
+                    Full-featured User Authentication with role-based access for Property Owners and Tenants.
+                </p>
+                <div class="list-group list-group-flush text-start small">
+                    <div class="list-group-item d-flex align-items-center gap-2 px-0 py-2 border-0">
+                        <i class="fa-solid fa-check-circle text-success"></i> <strong>User Registration</strong> with
+                        role selection
+                    </div>
+                    <div class="list-group-item d-flex align-items-center gap-2 px-0 py-2 border-0">
+                        <i class="fa-solid fa-check-circle text-success"></i> <strong>Secure Login</strong> (Username or
+                        Email)
+                    </div>
+                    <div class="list-group-item d-flex align-items-center gap-2 px-0 py-2 border-0">
+                        <i class="fa-solid fa-check-circle text-success"></i> <strong>Session-safe Logout</strong>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center gap-2 px-0 py-2 border-0">
+                        <i class="fa-solid fa-check-circle text-success"></i> <strong>Profile Management</strong> &
+                        Photo upload
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Breakdown Cards -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-6">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-primary">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary-subtle text-primary p-3 rounded-3">
+                        <i class="fa-solid fa-building-circle-check fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Property Owner</h4>
+                        <span class="text-muted small">Manage properties & rental requests</span>
+                    </div>
+                </div>
+                <p class="text-muted">As a property owner, your account enables you to list spaces and handle tenant
+                    inquiries directly.</p>
+                <ul class="list-unstyled text-secondary small space-y-2 mb-0">
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-primary me-2"></i> Create, edit, and delete
+                        your property listings</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-primary me-2"></i> Manage availability,
+                        pricing, photos, and specs</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-primary me-2"></i> Review tenant rental
+                        applications</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-primary me-2"></i> Accept or reject pending
+                        rental requests</li>
+                </ul>
+                <div class="mt-4 pt-3 border-top">
+                    {% if user.is_authenticated and user.profile.is_owner %}
+                    <a href="{% url 'property_create' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-plus-circle me-1"></i> Add New Property
+                    </a>
+                    <a href="{% url 'my_properties' %}" class="btn btn-link btn-sm text-decoration-none ms-2">
+                        My Listings &rarr;
+                    </a>
+                    {% else %}
+                    <a href="{% url 'property_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-building me-1"></i> View Listed Properties
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-success">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-success-subtle text-success p-3 rounded-3">
+                        <i class="fa-solid fa-house-chimney-user fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Tenant</h4>
+                        <span class="text-muted small">Search, request & review properties</span>
+                    </div>
+                </div>
+                <p class="text-muted">As a tenant, your account lets you find your ideal property and communicate with
+                    verified owners.</p>
+                <ul class="list-unstyled text-secondary small space-y-2 mb-0">
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Browse and search
+                        listings by location and type</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Filter by budget / rent
+                        range</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Send rental requests for
+                        available properties</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Track request status and
+                        leave property reviews</li>
+                </ul>
+                <div class="mt-4 pt-3 border-top">
+                    <a href="{% url 'property_list' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i> Explore Properties Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

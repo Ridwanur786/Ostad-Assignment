@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ property.title }} - Property Details{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'property_list' %}">Properties</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ property.title|truncatechars:35 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Property Details (Left Col) -->
+        <div class="col-lg-8">
+            <div class="card card-custom overflow-hidden border-0 shadow-sm mb-4">
+                <!-- High-res Image -->
+                <div class="position-relative" style="max-height: 480px; overflow: hidden; background-color: #0f172a;">
+                    <img src="{{ property.display_image_url }}" alt="{{ property.title }}" class="w-100 h-100"
+                        style="object-fit: cover; min-height: 350px;">
+
+                    <!-- Availability Badge -->
+                    <div class="position-absolute top-0 start-0 m-3">
+                        {% if property.availability_status == 'available' %}
+                        <span class="badge bg-success fs-6 shadow px-3 py-2"><i
+                                class="fa-solid fa-circle-check me-1"></i> Available for Rent</span>
+                        {% elif property.availability_status == 'rented' %}
+                        <span class="badge bg-secondary fs-6 shadow px-3 py-2"><i class="fa-solid fa-lock me-1"></i>
+                            Currently Rented</span>
+                        {% elif property.availability_status == 'pending' %}
+                        <span class="badge bg-warning text-dark fs-6 shadow px-3 py-2"><i
+                                class="fa-solid fa-clock me-1"></i> Application Pending</span>
+                        {% else %}
+                        <span class="badge bg-info text-dark fs-6 shadow px-3 py-2"><i
+                                class="fa-solid fa-wrench me-1"></i> Under Maintenance</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Property Type Badge -->
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-dark bg-opacity-75 fs-6 shadow px-3 py-2 text-capitalize">
+                            {{ property.get_property_type_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content Body -->
+                <div class="card-body p-4 p-md-5">
+                    <!-- Title & Location -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <h2 class="fw-bold text-dark mb-2">{{ property.title }}</h2>
+                            <p class="text-muted fs-6 mb-0">
+                                <i class="fa-solid fa-location-dot text-danger me-2"></i> {{ property.location }}
+                            </p>
+                        </div>
+                        <div class="text-md-end">
+                            <span class="text-secondary small d-block">Monthly Rent</span>
+                            <span class="text-primary fw-bold display-6">৳ {{ property.monthly_rent|floatformat:0
+                                }}</span>
+                            <span class="text-muted small">/ month</span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Key Spec Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-4 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center border">
+                                <i class="fa-solid fa-bed text-primary fa-xl mb-2 d-block"></i>
+                                <span class="d-block small text-muted">Bedrooms</span>
+                                <span class="fw-bold fs-5">{{ property.bedrooms }} Bed{{ property.bedrooms|pluralize
+                                    }}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-6">
+                            <div class="p-3 bg-light rounded-3 text-center border">
+                                <i class="fa-solid fa-bath text-info fa-xl mb-2 d-block"></i>
+                                <span class="d-block small text-muted">Bathrooms</span>
+                                <span class="fw-bold fs-5">{{ property.bathrooms }} Bath{{ property.bathrooms|pluralize
+                                    }}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <div class="p-3 bg-light rounded-3 text-center border">
+                                <i class="fa-solid fa-house-chimney text-warning fa-xl mb-2 d-block"></i>
+                                <span class="d-block small text-muted">Property Type</span>
+                                <span class="fw-bold fs-5 text-capitalize">{{ property.get_property_type_display
+                                    }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-align-left text-primary me-2"></i>
+                            About This Property</h5>
+                        <div class="text-secondary lh-lg" style="white-space: pre-line;">
+                            {{ property.description }}
+                        </div>
+                    </div>
+
+                    <!-- Meta dates -->
+                    <div class="d-flex flex-wrap justify-content-between text-muted small pt-3 border-top">
+                        <span><i class="fa-regular fa-calendar-plus me-1"></i> Listed: {{ property.created_at|date:"F
+                            d,Y - h:i A" }}</span>
+                        <span><i class="fa-regular fa-clock me-1"></i> Last updated: {{ property.updated_at|timesince }}
+                            ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenant Reviews & Ratings Section -->
+            <div class="card card-custom p-4 p-md-5 border-0 shadow-sm mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 border-bottom pb-3">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">
+                            <i class="fa-solid fa-star text-warning me-2"></i> Tenant Reviews & Ratings
+                        </h4>
+                        <span class="text-muted small">Real feedback from accepted tenants</span>
+                    </div>
+                    {% if property.review_count > 0 %}
+                    <div class="text-end">
+                        <div class="fs-4 fw-bold text-dark d-flex align-items-center gap-1 justify-content-end">
+                            <i class="fa-solid fa-star text-warning"></i> {{ property.average_rating }}
+                            <span class="text-muted fs-6 fw-normal">/ 5.0</span>
+                        </div>
+                        <span class="text-muted small">{{ property.review_count }} review{{ property.review_count|pluralize }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Write Review Form (If tenant has an accepted request and hasn't reviewed yet) -->
+                {% if can_review %}
+                <div class="p-4 bg-primary-subtle bg-opacity-10 rounded-3 border border-primary border-opacity-25 mb-4">
+                    <h5 class="fw-bold text-primary mb-2">
+                        <i class="fa-solid fa-pen-nib me-2"></i> Leave a Review for this Property
+                    </h5>
+                    <p class="text-muted small mb-3">
+                        Your rental request has been accepted by the owner! Please leave your rating and honest feedback.
+                    </p>
+                    <form method="POST" action="{% url 'add_review' property.pk %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="id_rating" class="form-label small fw-semibold text-secondary">Rating (1 to 5 Stars)</label>
+                                {{ review_form.rating }}
+                            </div>
+                            <div class="col-12">
+                                <label for="id_comment" class="form-label small fw-semibold text-secondary">Your Review Comment</label>
+                                {{ review_form.comment }}
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane me-1"></i> Submit Review
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% elif has_reviewed %}
+                <div class="alert alert-success border-success border-start border-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="fa-solid fa-circle-check text-success fa-lg"></i>
+                        <strong>Review Submitted</strong>
+                    </div>
+                    <p class="small text-secondary mb-0">
+                        You reviewed this property on {{ user_review.created_at|date:"M d, Y" }} with a rating of <strong>{{ user_review.rating }}/5</strong> stars.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Existing Reviews List -->
+                {% if reviews %}
+                <div class="d-flex flex-column gap-3">
+                    {% for rev in reviews %}
+                    <div class="p-3 bg-light rounded-3 border">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="{{ rev.tenant.profile.avatar_url }}" alt="{{ rev.tenant.username }}"
+                                    class="rounded-circle shadow-xs" width="40" height="40" style="object-fit: cover;">
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark">{{ rev.tenant.first_name|default:rev.tenant.username }}</h6>
+                                    <span class="text-muted small">{{ rev.created_at|date:"F d, Y" }}</span>
+                                </div>
+                            </div>
+                            <!-- Star Rating Display -->
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                {% if forloop.counter <= rev.rating %}
+                                <i class="fa-solid fa-star"></i>
+                                {% else %}
+                                <i class="fa-regular fa-star text-muted opacity-50"></i>
+                                {% endif %}
+                                {% endfor %}
+                                <span class="fw-bold text-dark small ms-1">{{ rev.rating }}/5</span>
+                            </div>
+                        </div>
+                        <p class="text-secondary small mb-0 lh-base">
+                            {{ rev.comment }}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 bg-light rounded-3 border">
+                    <i class="fa-regular fa-comments text-muted fa-2x mb-2"></i>
+                    <h6 class="fw-semibold text-dark">No Reviews Yet</h6>
+                    <p class="text-muted small mb-0">Be the first accepted tenant to leave a review for this property.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- Sidebar (Right Col): Owner & Action Controls -->
+        <div class="col-lg-4">
+            <!-- Owner Actions Card (Only if viewer is the owner or superuser) -->
+            {% if is_owner %}
+            <div class="card card-custom p-4 border-2 border-primary shadow-sm mb-4 bg-primary-subtle bg-opacity-10">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="fa-solid fa-screwdriver-wrench text-primary fa-lg"></i>
+                    <h5 class="fw-bold mb-0 text-primary">Owner Management</h5>
+                </div>
+                <p class="text-muted small mb-3">
+                    You are the owner of this property. You have exclusive permissions to manage, edit, or remove this
+                    listing.
+                </p>
+
+                <div class="d-grid gap-2">
+                    <!-- Edit Button -->
+                    <a href="{% url 'property_update' property.pk %}" class="btn btn-primary">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Edit Property Details
+                    </a>
+
+                    <!-- Toggle Availability Button -->
+                    <form method="POST" action="{% url 'property_toggle_status' property.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-outline-secondary w-100">
+                            {% if property.availability_status == 'available' %}
+                            <i class="fa-solid fa-lock me-2 text-warning"></i> Mark as Rented
+                            {% else %}
+                            <i class="fa-solid fa-circle-check me-2 text-success"></i> Mark as Available
+                            {% endif %}
+                        </button>
+                    </form>
+
+                    <!-- Delete Button -->
+                    <a href="{% url 'property_delete' property.pk %}" class="btn btn-outline-danger">
+                        <i class="fa-solid fa-trash-can me-2"></i> Delete Property
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Rental Request Widget (For Tenants / Visitors) -->
+            {% if not is_owner %}
+            <div class="card card-custom p-4 border-0 shadow-sm mb-4">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="fa-solid fa-paper-plane text-primary me-2"></i> Send Rental Request
+                </h5>
+
+                {% if user.is_authenticated %}
+                {% if existing_request and existing_request.status == 'pending' %}
+                <!-- Pending Request Alert -->
+                <div class="alert alert-warning border-warning border-start border-4 mb-0">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="fa-solid fa-clock text-warning fa-lg"></i>
+                        <strong>Request Pending</strong>
+                    </div>
+                    <p class="small text-secondary mb-2">
+                        You submitted a rental request on {{ existing_request.request_date|date:"M d, Y" }}. The owner
+                        is reviewing your request.
+                    </p>
+                    <div class="p-2 bg-light rounded small text-muted mb-3">
+                        "{{ existing_request.message }}"
+                    </div>
+                    <form method="POST" action="{% url 'cancel_rental_request' existing_request.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100"
+                            onclick="return confirm('Cancel this rental request?');">
+                            <i class="fa-solid fa-xmark me-1"></i> Cancel Pending Request
+                        </button>
+                    </form>
+                </div>
+                {% elif existing_request and existing_request.status == 'accepted' %}
+                <!-- Accepted Request Alert -->
+                <div class="alert alert-success border-success border-start border-4 mb-0">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="fa-solid fa-circle-check text-success fa-lg"></i>
+                        <strong>Request Accepted!</strong>
+                    </div>
+                    <p class="small text-secondary mb-0">
+                        The owner has accepted your rental request. Contact the owner below to finalize lease details.
+                    </p>
+                </div>
+                {% else %}
+                <!-- Send New Rental Request Form -->
+                <p class="text-muted small mb-3">
+                    Interested in renting this space? Send a direct rental request to the owner.
+                </p>
+                <form method="POST" action="{% url 'send_rental_request' property.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_message" class="form-label small fw-semibold text-secondary">Your Message /
+                            Inquiry</label>
+                        {{ request_form.message }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-paper-plane me-1"></i> Submit Rental Request
+                    </button>
+                </form>
+                {% endif %}
+                {% else %}
+                <!-- Unauthenticated Prompt -->
+                <p class="text-muted small mb-3">
+                    Log in to your tenant account to send a rental request for this property.
+                </p>
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Log In to Request
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Owner Profile Card -->
+            <div class="card card-custom p-4 border-0 shadow-sm mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-id-card text-primary me-2"></i> Property Owner
+                </h5>
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <img src="{{ property.owner.profile.avatar_url }}" alt="{{ property.owner.username }}"
+                        class="rounded-circle shadow-sm" width="60" height="60" style="object-fit: cover;">
+                    <div>
+                        <h6 class="fw-bold mb-0">{{ property.owner.first_name }} {{
+                            property.owner.last_name|default:property.owner.username }}</h6>
+                        <span class="badge-role-owner mt-1 d-inline-block">
+                            <i class="fa-solid fa-key me-1"></i> Property Owner
+                        </span>
+                    </div>
+                </div>
+
+                <ul class="list-unstyled text-secondary small space-y-2 mb-4">
+                    <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-envelope text-primary me-2"></i> Email:</span>
+                        <a href="mailto:{{ property.owner.email }}"
+                            class="text-decoration-none fw-semibold text-dark">{{ property.owner.email }}</a>
+                    </li>
+                    {% if property.owner.profile.phone_number %}
+                    <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-phone text-success me-2"></i> Phone:</span>
+                        <a href="tel:{{ property.owner.profile.phone_number }}"
+                            class="text-decoration-none fw-semibold text-dark">{{ property.owner.profile.phone_number
+                            }}</a>
+                    </li>
+                    {% endif %}
+                    {% if property.owner.profile.address %}
+                    <li class="py-2 border-bottom d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-map-pin text-danger me-2"></i> Address:</span>
+                        <span class="text-dark">{{ property.owner.profile.address|truncatechars:28 }}</span>
+                    </li>
+                    {% endif %}
+                    <li class="py-2 d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-calendar-check text-muted me-2"></i> Member Since:</span>
+                        <span class="text-muted">{{ property.owner.date_joined|date:"M Y" }}</span>
+                    </li>
+                </ul>
+
+                <a href="mailto:{{ property.owner.email }}?subject=Inquiry about {{ property.title|urlencode }}"
+                    class="btn btn-outline-primary w-100">
+                    <i class="fa-solid fa-paper-plane me-2"></i> Contact Property Owner
+                </a>
+            </div>
+
+            <!-- More from this Owner -->
+            {% if related_properties %}
+            <div class="card card-custom p-4 border-0 shadow-sm">
+                <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i> More from
+                    this Owner</h6>
+                <div class="d-flex flex-column gap-3">
+                    {% for item in related_properties %}
+                    <a href="{% url 'property_detail' item.pk %}"
+                        class="d-flex gap-3 text-decoration-none text-dark p-2 rounded-3 hover-bg border">
+                        <img src="{{ item.display_image_url }}" alt="{{ item.title }}" width="70" height="60"
+                            class="rounded-2" style="object-fit: cover;">
+                        <div class="overflow-hidden">
+                            <h6 class="fw-semibold mb-1 text-truncate small">{{ item.title }}</h6>
+                            <span class="text-primary fw-bold small">৳ {{ item.monthly_rent|floatformat:0 }}</span>
+                            <span class="text-muted small">/ mo</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Property Rental & Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Left Sidebar: Profile Card -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 text-center border-0 shadow-sm">
+                <div class="position-relative d-inline-block mx-auto mb-3">
+                    <img src="{{ profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle shadow-sm"
+                        style="width: 130px; height: 130px; object-fit: cover; border: 4px solid #ffffff;">
+                    <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-light rounded-circle"
+                        title="Active">
+                        <span class="visually-hidden">Active</span>
+                    </span>
+                </div>
+
+                <h4 class="fw-bold mb-1">{{ profile.full_name }}</h4>
+                <p class="text-muted small mb-2">@{{ user.username }}</p>
+
+                <div class="mb-3">
+                    {% if profile.is_owner %}
+                    <span class="badge-role-owner d-inline-flex align-items-center gap-1">
+                        <i class="fa-solid fa-key"></i> Property Owner
+                    </span>
+                    {% else %}
+                    <span class="badge-role-tenant d-inline-flex align-items-center gap-1">
+                        <i class="fa-solid fa-user"></i> Tenant
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{% url 'profile_update' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-user-pen me-2"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-lock me-2"></i> Change Password
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm mt-2">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Sign Out
+                    </a>
+                </div>
+
+                <hr class="my-4 text-muted">
+
+                <div class="text-start small text-muted">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="fa-regular fa-calendar-check me-2"></i> Member since:</span>
+                        <strong class="text-dark">{{ user.date_joined|date:"M d, Y" }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fa-solid fa-clock-rotate-left me-2"></i> Last update:</span>
+                        <strong class="text-dark">{{ profile.updated_at|date:"M d, Y" }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content: Profile Details & Role Dashboard Preview -->
+        <div class="col-lg-8">
+            <!-- Profile Details Card -->
+            <div class="card card-custom p-4 border-0 shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fa-solid fa-address-card text-primary me-2"></i> Profile Information
+                    </h5>
+                    <a href="{% url 'profile_update' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                    </a>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">First Name</label>
+                        <span class="fs-6 fw-medium text-dark">{{ user.first_name|default:"Not provided" }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Last Name</label>
+                        <span class="fs-6 fw-medium text-dark">{{ user.last_name|default:"Not provided" }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Email Address</label>
+                        <span class="fs-6 fw-medium text-dark"><i class="fa-regular fa-envelope me-1 text-muted"></i>
+                            {{ user.email|default:"Not provided" }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-semibold d-block">Phone Number</label>
+                        <span class="fs-6 fw-medium text-dark"><i class="fa-solid fa-phone me-1 text-muted">
+
+                            </i>
+                            {{ profile.phone_number|default:"Notprovided" }}</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small fw-semibold d-block">Address</label>
+                        <span class="fs-6 fw-medium text-dark"><i class="fa-solid fa-location-dot me-1 text-muted"></i>
+                            {{ profile.address|default:"Not provided" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role-Specific Features & Permissions Card -->
+            <div class="card card-custom p-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3 pb-2 border-bottom">
+                    <div
+                        class="p-2 {% if profile.is_owner %}bg-primary-subtle text-primary{% else %}bg-success-subtle text-success{% endif %} rounded-2">
+                        <i
+                            class="fa-solid {% if profile.is_owner %}fa-building-user{% else %}fa-house-chimney-user{% endif %} fa-lg"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">Role: {{ profile.get_role_display }}</h5>
+                        <small class="text-muted">Your permissions and assigned capabilities</small>
+                    </div>
+                </div>
+
+                {% if profile.is_owner %}
+                <div class="alert alert-primary bg-primary-subtle border-0 mb-3" role="alert">
+                    <h6 class="fw-bold mb-1"><i class="fa-solid fa-circle-info me-2"></i> Property Owner Privileges</h6>
+                    <p class="mb-0 small">You have authorized access to list properties for rent, modify listings, and
+                        review incoming rental requests from tenants.</p>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'property_create' %}" class="text-decoration-none">
+                            <div class="border rounded-3 p-3 bg-light-subtle h-100 hover-shadow transition">
+                                <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-plus-circle me-1"></i> Add
+                                    Property</h6>
+                                <p class="text-muted small mb-0">Create new rental listings with photos, location, and
+                                    rent.</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'my_properties' %}" class="text-decoration-none">
+                            <div class="border rounded-3 p-3 bg-light-subtle h-100 hover-shadow transition">
+                                <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-list-check me-1"></i> My
+                                    Properties</h6>
+                                <p class="text-muted small mb-0">View, edit, toggle availability and delete your
+                                    listings.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-success bg-success-subtle border-0 mb-3" role="alert">
+                    <h6 class="fw-bold mb-1"><i class="fa-solid fa-circle-info me-2"></i> Tenant Privileges</h6>
+                    <p class="mb-0 small">You can browse verified properties, apply for rentals with custom messages,
+                        track your applications, and submit reviews.</p>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'property_list' %}" class="text-decoration-none">
+                            <div class="border rounded-3 p-3 bg-light-subtle h-100 hover-shadow transition">
+                                <h6 class="fw-bold mb-1 text-success"><i class="fa-solid fa-magnifying-glass me-1"></i>
+                                    Explore Properties</h6>
+                                <p class="text-muted small mb-0">Filter by location, rent, bedrooms, and property types.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded-3 p-3 bg-light-subtle h-100">
+                            <h6 class="fw-bold mb-1 text-secondary"><i class="fa-solid fa-key me-1"></i> List Properties
+                            </h6>
+                            <p class="text-muted small mb-0">Want to list your own place? Change role to Property Owner
+                                in <a href="{% url 'profile_update' %}" class="text-primary fw-semibold">Edit
+                                    Profile</a>.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

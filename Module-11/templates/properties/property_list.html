@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Properties - Property Rental & Management{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header with Action -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-building me-2 text-primary"></i> Explore Properties</h2>
+            <p class="text-muted mb-0">Browse through available homes, apartments, and commercial spaces</p>
+        </div>
+        <div>
+            {% if user.is_authenticated and user.profile.is_owner %}
+            <a href="{% url 'property_create' %}" class="btn btn-primary shadow-sm">
+                <i class="fa-solid fa-plus-circle me-1"></i> Add New Property
+            </a>
+            <a href="{% url 'my_properties' %}" class="btn btn-outline-primary ms-2">
+                <i class="fa-solid fa-list-check me-1"></i> My Listings
+            </a>
+            {% elif user.is_authenticated %}
+            <a href="{% url 'profile_update' %}" class="btn btn-outline-secondary btn-sm"
+                title="Become a Property Owner to list properties">
+                <i class="fa-solid fa-key me-1"></i> Want to list property? Switch to Owner
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}?next={% url 'property_create' %}" class="btn btn-primary shadow-sm">
+                <i class="fa-solid fa-plus-circle me-1"></i> Post Your Property
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search & Filter Card -->
+    <div class="card card-custom mb-4 p-4 border-0 shadow-sm">
+        <form method="GET" action="{% url 'property_list' %}" class="row g-3 align-items-end">
+            <!-- Search Keyword -->
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Search Keyword
+                </label>
+                <input type="text" name="q" class="form-control" placeholder="Title, location, features..."
+                    value="{{ search_query }}">
+            </div>
+
+            <!-- Location -->
+            <div class="col-md-2 col-sm-6">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-location-dot me-1"></i> Location
+                </label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Dhaka, Banani"
+                    value="{{ selected_location }}">
+            </div>
+
+            <!-- Property Type -->
+            <div class="col-md-2 col-sm-6">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-house-chimney me-1"></i> Property Type
+                </label>
+                <select name="property_type" class="form-select">
+                    <option value="">All Types</option>
+                    {% for type_val, type_label in property_types %}
+                    {% if selected_type == type_val %}
+                    <option value="{{ type_val }}" selected>{{ type_label }}</option>
+                    {% else %}
+                    <option value="{{ type_val }}">{{ type_label }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Min Rent -->
+            <div class="col-md-2 col-sm-6">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-coins me-1"></i> Min Rent (BDT)
+                </label>
+                <input type="number" name="min_rent" class="form-control" placeholder="Min BDT"
+                    value="{{ selected_min_rent }}">
+            </div>
+
+            <!-- Max Rent -->
+            <div class="col-md-2 col-sm-6">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-money-bill-wave me-1"></i> Max Rent (BDT)
+                </label>
+                <input type="number" name="max_rent" class="form-control" placeholder="Max BDT"
+                    value="{{ selected_max_rent }}">
+            </div>
+
+            <!-- Availability Status -->
+            <div class="col-md-1 col-sm-6">
+                <label class="form-label small fw-semibold text-secondary mb-1">
+                    <i class="fa-solid fa-clock me-1"></i> Status
+                </label>
+                <select name="availability" class="form-select px-2">
+                    <option value="">All</option>
+                    {% for stat_val, stat_label in availability_choices %}
+                    {% if selected_availability == stat_val %}
+                    <option value="{{ stat_val }}" selected>{{ stat_label }}</option>
+                    {% else %}
+                    <option value="{{ stat_val }}">{{ stat_label }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-12 d-flex justify-content-end gap-2 mt-3 pt-2 border-top">
+                <a href="{% url 'property_list' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa-solid fa-rotate-left me-1"></i> Reset Filters
+                </a>
+                <button type="submit" class="btn btn-primary btn-sm px-4">
+                    <i class="fa-solid fa-filter me-1"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">Showing <strong>
+                {{ page_obj.paginator.count }}
+            </strong>
+            propert{{ page_obj.paginator.count|pluralize:"y,ies" }}
+        </span>
+    </div>
+
+    <!-- Properties Grid -->
+    {% if page_obj %}
+    <div class="row g-4">
+        {% for prop in page_obj %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card card-custom h-100 overflow-hidden border-0 shadow-sm d-flex flex-column">
+                <!-- Image & Badges -->
+                <div class="position-relative" style="height: 220px; overflow: hidden; background-color: #f1f5f9;">
+                    <img src="{{ prop.display_image_url }}" alt="{{ prop.title }}" class="w-100 h-100"
+                        style="object-fit: cover; transition: transform 0.3s ease;">
+
+                    <!-- Availability Badge -->
+                    <div class="position-absolute top-0 start-0 m-3">
+                        {% if prop.availability_status == 'available' %}
+                        <span class="badge bg-success shadow-sm"><i class="fa-solid fa-circle-check me-1"></i>
+                            Available</span>
+                        {% elif prop.availability_status == 'rented' %}
+                        <span class="badge bg-secondary shadow-sm"><i class="fa-solid fa-lock me-1"></i> Rented</span>
+                        {% elif prop.availability_status == 'pending' %}
+                        <span class="badge bg-warning text-dark shadow-sm"><i class="fa-solid fa-clock me-1"></i>
+                            Pending</span>
+                        {% else %}
+                        <span class="badge bg-info text-dark shadow-sm"><i class="fa-solid fa-wrench me-1"></i>
+                            Maintenance</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Property Type Badge -->
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-dark bg-opacity-75 shadow-sm text-capitalize">
+                            {{ prop.get_property_type_display }}
+                        </span>
+                    </div>
+
+                    <!-- Price Tag Overlay -->
+                    <div class="position-absolute bottom-0 start-0 w-100 p-2"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                        <span class="text-white fw-bold fs-5 ps-2">
+                            ৳ {{ prop.monthly_rent|floatformat:0 }}
+                        </span>
+                        <span class="text-white-50 small">/ month</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body d-flex flex-column p-4 flex-grow-1">
+                    <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="{{ prop.title }}">
+                        <a href="{% url 'property_detail' prop.pk %}"
+                            class="text-dark text-decoration-none hover-primary">
+                            {{ prop.title }}
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small mb-3 text-truncate">
+                        <i class="fa-solid fa-location-dot text-danger me-1"></i> {{ prop.location }}
+                    </p>
+
+                    <p class="text-secondary small mb-3 flex-grow-1"
+                        style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">
+                        {{ prop.description }}
+                    </p>
+
+                    <!-- Features/Specs -->
+                    <div
+                        class="d-flex justify-content-between text-secondary small py-2 px-3 bg-light rounded-3 mb-3 border">
+                        <span><i class="fa-solid fa-bed text-primary me-1"></i> <strong>{{ prop.bedrooms }}</strong>
+                            Bed{{ prop.bedrooms|pluralize }}</span>
+                        <span><i class="fa-solid fa-bath text-info me-1"></i> <strong>{{ prop.bathrooms }}</strong>
+                            Bath{{ prop.bathrooms|pluralize }}</span>
+                        <span><i class="fa-solid fa-calendar text-muted me-1"></i>
+                            {{ prop.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+
+                    <!-- Owner & Actions Footer -->
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{ prop.owner.profile.avatar_url }}" alt="{{ prop.owner.username }}"
+                                class="rounded-circle" width="28" height="28" style="object-fit: cover;">
+                            <span class="small text-muted">
+                                {{ prop.owner.first_name|default:prop.owner.username }}
+                            </span>
+                        </div>
+
+                        <div class="d-flex gap-1">
+                            {% if user == prop.owner or user.is_superuser %}
+                            <a href="{% url 'property_update' prop.pk %}" class="btn btn-outline-secondary btn-sm"
+                                title="Edit Property">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'property_detail' prop.pk %}" class="btn btn-primary btn-sm px-3">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5" aria-label="Property pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&property_type={{ selected_type }}&location={{ selected_location }}&min_rent={{ selected_min_rent }}&max_rent={{ selected_max_rent }}&availability={{ selected_availability }}">
+                    <i class="fa-solid fa-chevron-left me-1"></i> Previous
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link"><i class="fa-solid fa-chevron-left me-1"></i>
+                    Previous</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %} <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ num }}&q={{ search_query }}&property_type={{ selected_type }}&location={{ selected_location }}&min_rent={{ selected_min_rent }}&max_rent={{ selected_max_rent }}&availability={{ selected_availability }}">{{
+                    num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&property_type={{ selected_type }}&location={{ selected_location }}&min_rent={{ selected_min_rent }}&max_rent={{ selected_max_rent }}&availability={{ selected_availability }}">
+                        Next <i class="fa-solid fa-chevron-right ms-1"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">Next <i
+                            class="fa-solid fa-chevron-right ms-1"></i></span></li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="card card-custom text-center py-5 border-0 shadow-sm">
+        <div class="py-5">
+            <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex p-4 mb-3">
+                <i class="fa-solid fa-building-circle-xmark fa-3x"></i>
+            </div>
+            <h4 class="fw-bold">No Properties Found</h4>
+            <p class="text-muted col-md-6 mx-auto mb-4">
+                No property listings match your current search filters. Try adjusting your search criteria or clear
+                filters.
+            </p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{% url 'property_list' %}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-rotate-left me-1"></i> Clear Filters
+                </a>
+                {% if user.is_authenticated and user.profile.is_owner %}
+                <a href="{% url 'property_create' %}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus me-1"></i> Add First Listing
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

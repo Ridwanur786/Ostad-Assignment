@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - Property Rental & Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 p-md-5 border-0 shadow-sm">
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">
+                            <i class="fa-solid fa-user-pen text-primary me-2"></i> Update Profile
+                        </h2>
+                        <p class="text-muted mb-0">Modify your personal details and contact settings</p>
+                    </div>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Back to Profile
+                    </a>
+                </div>
+
+                {% if u_form.non_field_errors or p_form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {% for error in u_form.non_field_errors %}
+                    <div><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ error }}</div>
+                    {% endfor %}
+                    {% for error in p_form.non_field_errors %}
+                    <div><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ error }}</div>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Avatar Preview & Upload -->
+                    <div
+                        class="mb-4 text-center text-sm-start d-sm-flex align-items-center gap-4 bg-light p-3 rounded-3">
+                        <img id="avatarPreview" src="{{ profile.avatar_url }}" alt="{{ user.username }}"
+                            class="rounded-circle shadow-sm mx-auto mx-sm-0"
+                            style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #fff;">
+                        <div class="flex-grow-1 mt-3 mt-sm-0">
+                            <label for="{{ p_form.profile_picture.id_for_label }}" class="form-label fw-bold mb-1">
+                                Change Profile Picture
+                            </label>
+                            {{ p_form.profile_picture }}
+                            <div class="form-text small text-muted">Supports JPG, PNG or WebP image files.</div>
+                            {% if p_form.profile_picture.errors %}
+                            <div class="text-danger small mt-1">{{ p_form.profile_picture.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <h5 class="fw-semibold text-secondary mb-3"><i class="fa-solid fa-user me-1"></i> Account
+                        Information</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ u_form.first_name.id_for_label }}" class="form-label fw-medium">First
+                                Name</label>
+                            {{ u_form.first_name }}
+                            {% if u_form.first_name.errors %}
+                            <div class="text-danger small mt-1">{{ u_form.first_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ u_form.last_name.id_for_label }}" class="form-label fw-medium">Last
+                                Name</label>
+                            {{ u_form.last_name }}
+                            {% if u_form.last_name.errors %}
+                            <div class="text-danger small mt-1">{{ u_form.last_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12">
+                            <label for="{{ u_form.email.id_for_label }}" class="form-label fw-medium">Email Address
+                                <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i
+                                        class="fa-regular fa-envelope"></i></span>
+                                {{ u_form.email }}
+                            </div>
+                            {% if u_form.email.errors %}
+                            <div class="text-danger small mt-1">{{ u_form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Role & Contact Details -->
+                    <h5 class="fw-semibold text-secondary mt-4 mb-3"><i class="fa-solid fa-id-badge me-1"></i> Role &
+                        Contact Info</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ p_form.role.id_for_label }}" class="form-label fw-medium">User Role <span
+                                    class="text-danger">*</span></label>
+                            {{ p_form.role }}
+                            <div class="form-text small text-muted">Switching role adjusts your permissions
+                                (Owner/Tenant).</div>
+                            {% if p_form.role.errors %}
+                            <div class="text-danger small mt-1">{{ p_form.role.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ p_form.phone_number.id_for_label }}" class="form-label fw-medium">Phone
+                                Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i
+                                        class="fa-solid fa-phone"></i></span>
+                                {{ p_form.phone_number }}
+                            </div>
+                            {% if p_form.phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ p_form.phone_number.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label for="{{ p_form.address.id_for_label }}" class="form-label fw-medium">Address</label>
+                            {{ p_form.address }}
+                            {% if p_form.address.errors %}
+                            <div class="text-danger small mt-1">{{ p_form.address.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                            <i class="fa-solid fa-floppy-disk me-2"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live preview for profile picture upload
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('{{ p_form.profile_picture.id_for_label }}');
+        const preview = document.getElementById('avatarPreview');
+
+        if (fileInput && preview) {
+            fileInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Property Management{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{% url 'property_list' %}">Properties</a></li>
+                    {% if is_edit %}
+                    <li class="breadcrumb-item"><a href="{% url 'property_detail' property.pk %}">{{
+                            property.title|truncatechars:20 }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                    {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">Add Listing</li>
+                    {% endif %}
+                </ol>
+            </nav>
+
+            <div class="card card-custom border-0 shadow-lg overflow-hidden">
+                <div class="card-header bg-white border-bottom p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+                            <i
+                                class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-house-circle-check{% endif %} fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ title }}</h3>
+                            <p class="text-muted small mb-0">Fill in the details below to {% if is_edit %}update your
+                                property details{% else %}publish a new listing on RentalHub{% endif %}.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger shadow-sm">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-4">
+                            <!-- Title -->
+                            <div class="col-12">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-heading text-primary me-1"></i> Property Title <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.title }}
+                                <small class="text-muted">A catchy title describing your property</small>
+                                {% if form.title.errors %}
+                                <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-align-left text-primary me-1"></i> Description <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.description }}
+                                <small class="text-muted">Highlight key features, rules, amenities, floor level,
+                                    utilities, etc.</small>
+                                {% if form.description.errors %}
+                                <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Property Type & Availability -->
+                            <div class="col-md-6">
+                                <label for="{{ form.property_type.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-building text-primary me-1"></i> Property Type <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.property_type }}
+                                {% if form.property_type.errors %}
+                                <div class="text-danger small mt-1">{{ form.property_type.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.availability_status.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-clock text-primary me-1"></i> Availability Status <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.availability_status }}
+                                {% if form.availability_status.errors %}
+                                <div class="text-danger small mt-1">{{ form.availability_status.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-12">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-location-dot text-danger me-1"></i> Location <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.location }}
+                                <small class="text-muted">Full address or neighborhood (e.g. Block D, Section 11,
+                                    Mirpur, Dhaka)</small>
+                                {% if form.location.errors %}
+                                <div class="text-danger small mt-1">{{ form.location.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Monthly Rent, Bedrooms, Bathrooms -->
+                            <div class="col-md-4">
+                                <label for="{{ form.monthly_rent.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-money-bill-wave text-success me-1"></i> Monthly Rent (BDT)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.monthly_rent }}
+                                {% if form.monthly_rent.errors %}
+                                <div class="text-danger small mt-1">{{ form.monthly_rent.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="{{ form.bedrooms.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-bed text-primary me-1"></i> Bedrooms <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.bedrooms }}
+                                {% if form.bedrooms.errors %}
+                                <div class="text-danger small mt-1">{{ form.bedrooms.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="{{ form.bathrooms.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-bath text-info me-1"></i> Bathrooms <span
+                                        class="text-danger">*</span>
+                                </label>
+                                {{ form.bathrooms }}
+                                {% if form.bathrooms.errors %}
+                                <div class="text-danger small mt-1">{{ form.bathrooms.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Property Image -->
+                            <div class="col-12">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-image text-primary me-1"></i> Property Image
+                                </label>
+
+                                {% if is_edit and property.image %}
+                                <div class="mb-3 d-flex align-items-center gap-3 p-3 bg-light rounded-3 border">
+                                    <img src="{{ property.display_image_url }}" alt="Current Photo" class="rounded-2"
+                                        width="100" height="75" style="object-fit: cover;">
+                                    <div>
+                                        <span class="badge bg-secondary mb-1">Current Image</span>
+                                        <div class="small text-muted">{{ property.image.name }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {{ form.image }}
+                                <small class="text-muted">Upload high quality JPG, PNG, or WEBP photo of the
+                                    property.</small>
+                                {% if form.image.errors %}
+                                <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                            {% if is_edit %}
+                            <a href="{% url 'property_detail' property.pk %}" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            {% else %}
+                            <a href="{% url 'property_list' %}" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fa-solid fa-check-circle me-1"></i> {{ button_text }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
