@@ -1,0 +1,3 @@
+1,2026-07-11,Food,Lunch at restaurant,350
+2,2026-07-11,Transport,Rickshaw,80
+3,2026-07-12,Shopping,T-Shirt,1200
